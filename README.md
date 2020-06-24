@@ -2,7 +2,7 @@
 If you want to test the project make sure that you have postman:
 This will allow you to test the functionality of what you wrote without ever needing to go to the front end
 # Link
-
+https://www.postman.com
 # Installing and running Firebase
 You probably won't need to do this
 
