@@ -1,8 +1,9 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const app = require("express")();
-//Get the FBAuth
+const FBAuth = require("./util/fbAuth");
 const cors = require("cors");
+const {db} = require('./util/admin')
 app.use(cors());
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
