@@ -64,6 +64,32 @@ exports.signup = (req, res) => {
     });
 };
 
+//login a user
 exports.login = (req, res) => {
-  
-}
+  const user = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+  const { valid, errors } = validateLoginData(user);
+  //Check for errors in validate login data
+  if (!valid) {
+    return res.status(400).json(errors);
+  }
+  //no errors, login
+  firebase
+    .auth()
+    .signInWithEmailAndPassword(user.email, user.password)
+    .then((data) => {
+      //If successful get the id token
+      return data.user.getIdToken();
+    }) //return the id token to the console
+    .then((token) => {
+      return res.json({ token });
+    }) //catch any errors if anything is incorrect
+    .catch((err) => {
+      console.log(err);
+      return res
+        .status(403)
+        .json({ general: "Wrong credentials, please try again" });
+    });
+};
