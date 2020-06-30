@@ -23,7 +23,7 @@ exports.validateSignupData = (data) => {
   } else if (!isEmail(data.email)) {
     errors.email = "Email must be a valid email address";
   }
-  if (isEmail(data.password)) {
+  if (isEmpty(data.password)) {
     errors.password = "Please fill out a password";
   }
   if (data.password !== data.confirmPassword) {
@@ -45,7 +45,7 @@ exports.validateLoginData = (data) => {
     errors.email = "Please sign in with your email";
   }
   if (isEmpty(data.password)) {
-    errors.password = "Incorrect Password, please try again";
+    errors.password = "Enter a password, please try again";
   }
   return {
     errors,
