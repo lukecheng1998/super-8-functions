@@ -100,8 +100,9 @@ exports.getAuthenticatedUser = (req, res) => {
   db.doc(`/users/${req.user.email}`).get()
   .then(doc => {
     if(doc.exists){
+      //Create Credentials sublist
       userData.credentials = doc.data();
-      console.log(userData.credentials)
+      console.log(userData)
       //Later on return the location of where the person has been
       // userData.credentials.push({
       //   createdAt: doc.data().recipient,

@@ -52,7 +52,7 @@ exports.validateLoginData = (data) => {
     valid: Object.keys(errors).length === 0 ? true : false,
   };
 };
-//Get user details
+//Get user details we might not need this method
 exports.reduceUserDetails = (data) => {
   let userDetails = {};
   if (!isEmpty(data.bio.trim())) {
