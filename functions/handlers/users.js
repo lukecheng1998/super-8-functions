@@ -84,6 +84,7 @@ exports.login = (req, res) => {
       return data.user.getIdToken();
     }) //return the id token to the console
     .then((token) => {
+      console.log(token);
       return res.json({ token });
     }) //catch any errors if anything is incorrect
     .catch((err) => {
@@ -93,3 +94,27 @@ exports.login = (req, res) => {
         .json({ general: "Wrong credentials, please try again" });
     });
 };
+//Get an authenticated user
+exports.getAuthenticatedUser = (req, res) => {
+  let userData = {};
+  db.doc(`/users/${req.user.email}`).get()
+  .then(doc => {
+    if(doc.exists){
+      userData = doc.data();
+      console.log(userData.credentials)
+      //Later on return the location of where the person has been
+      // userData.credentials.push({
+      //   createdAt: doc.data().recipient,
+      //   email: doc.data().email,
+      //   handle: doc.data().handle,
+      //   userId: doc.data().userId
+      // })
+    }
+    return res.json(userData)
+  })
+  //we will need a couple more thens in order to get the location data
+  .catch(err => {
+    console.error(err);
+    return res.status(500).json({error: error.code})
+  })
+}

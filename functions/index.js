@@ -12,10 +12,12 @@ app.use(cors());
 //  response.send("Hello from Firebase!");
 // });
 //Get the functions from the other file
-const { signup, login } = require("./handlers/users");
+const { signup, login, getAuthenticatedUser } = require("./handlers/users");
 //Sign up
 app.post("/signup", signup);
 //Log into the file
 app.post("/login", login);
+//get user
+app.get("/user", FBAuth, getAuthenticatedUser);
 //export the url for login
 exports.api = functions.https.onRequest(app);
