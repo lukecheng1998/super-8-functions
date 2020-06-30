@@ -100,7 +100,7 @@ exports.getAuthenticatedUser = (req, res) => {
   db.doc(`/users/${req.user.email}`).get()
   .then(doc => {
     if(doc.exists){
-      userData = doc.data();
+      userData.credentials = doc.data();
       console.log(userData.credentials)
       //Later on return the location of where the person has been
       // userData.credentials.push({
