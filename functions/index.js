@@ -13,6 +13,9 @@ app.use(cors());
 // });
 //Get the functions from the other file
 const { signup, login, getAuthenticatedUser } = require("./handlers/users");
+//functions from bluetooth.js
+const { discoverDevicesOrDisconnect } = require("./handlers/bluetooth")
+
 //Sign up
 app.post("/signup", signup);
 //Log into the file
