@@ -1,0 +1,104 @@
+<html> 
+ 
+<head>  
+    <script> 
+        var connected = false;   
+        var selected_device;   
+        var connected_server; 
+
+        function discoverDevicesOrDisconnect() {    
+            console.log("discoverDevicesOrDisconnect");    
+            if (!connected) {     
+                discoverDevices();    
+            } else {     
+                selected_device.gatt.disconnect();     
+                resetUI();    
+            }   
+        } 
+ 
+        function discoverDevices() {    
+            console.log("discoverDevices"); 
+            setConnectedStatus(false);    
+ 
+            var options = {     
+                acceptAllDevices: true  
+            } 
+            navigator.bluetooth.requestDevice(options)     
+                .then(device => {      
+                    console.log('> Name:             ' + device.name);      
+                    console.log('> Id:               ' + device.id);      
+                    console.log('> Connected:        ' + device.gatt.connected);      
+                    selected_device = device; 
+                    console.log(selected_device);      
+                    connect();     
+                })     
+                .catch(error => {      
+                    alert('ERROR: ' + error);      
+                    console.log('ERROR: ' + error);     
+                });   
+        }
+
+        function connect() {    
+            if (connected == false) {     
+                console.log("connecting");     
+                selected_device.gatt.connect().then(
+                    function (server) {       
+                        console.log("Connected to " + server.device.id);       
+                        console.log("connected=" + server.connected);      
+                        setConnectedStatus(true);       
+                        connected_server = server;       
+                        selected_device.addEventListener('gattserverdisconnected', onDisconnected);
+                        // discoverSvcsAndChars();      
+                    },      
+                    function (error) {       
+                        console.log("ERROR: could not connect - " + error);       
+                        alert("ERROR: could not connect - " + error);       
+                        setConnectedStatus(false);      
+                    });    
+            }   
+        } 
+
+        function onDisconnected() {    
+            console.log("onDisconnected");    
+            resetUI();   
+        } 
+
+        function setConnectedStatus(status) {    
+            connected = status;    
+            document.getElementById('status_connected').innerHTML = status;    
+            if (status == true) {     
+                document.getElementById('btn_scan').innerHTML = "Disconnect";    
+            } else { 
+                document.getElementById('btn_scan').innerHTML = "Discover Devices";    
+            }   
+        }
+
+        function resetUI() {    
+            setConnectedStatus(false);      
+            document.getElementById('model_number').innerHTML = "";    
+            document.getElementById('accelerometer_data').innerHTML = "";   
+        } 
+    </script> 
+</head> 
+ 
+<body>  
+    <h1>Web Bluetooth</h1>  
+    <h2>Status</h2>  
+    <table border="1">   
+        <tr>    
+            <td>     
+                <b>Connected</b>    
+            </td>    
+        </tr>   
+        <tr>    
+            <td id="status_connected">false</td>    
+        </tr>  
+    </table>  
+    <h2>Device Discovery and Connection</h2>  
+    <button id="btn_scan" onclick="discoverDevicesOrDisconnect()">Discover Devices</button>  
+    <hr>  
+
+</body> 
+ 
+</html> 
+ 
