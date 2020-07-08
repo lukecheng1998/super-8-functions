@@ -1,3 +1,3 @@
 exports.discoverDevicesOrDisconnect = () => {
-    console.log("discoverDevicesOrDisconnect");
-}
+  console.log("discoverDevicesOrDisconnect");
+};
