@@ -12,9 +12,11 @@ app.use(cors());
 //  response.send("Hello from Firebase!");
 // });
 //Get the functions from the other file
-const { signup, login, getAuthenticatedUser } = require("./handlers/users");
+const { signup, login, getAuthenticatedUser, changeSicknessStatus } = require("./handlers/users");
 //functions from bluetooth.js
 const { discoverDevicesOrDisconnect } = require("./handlers/bluetooth")
+
+//TODO: Once a sickness is discovered, we'll need a list to return from
 
 //Sign up
 app.post("/signup", signup);
@@ -22,5 +24,7 @@ app.post("/signup", signup);
 app.post("/login", login);
 //get user
 app.get("/user", FBAuth, getAuthenticatedUser);
-//export the url for login
+//change the sickness status
+app.post("/user", FBAuth, changeSicknessStatus);
+//export the url
 exports.api = functions.https.onRequest(app);

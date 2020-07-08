@@ -3,6 +3,7 @@ const firebase = require("firebase");
 const config = require("../util/config");
 firebase.initializeApp(config);
 //file for authenticating users and getting user details
+//We might need another in order to read data
 const {
   validateSignupData,
   validateLoginData,
@@ -14,7 +15,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    handle: req.body.handle,
+    handle: req.body.handle
   };
   //Check and make sure all the contents are valid
   const { valid, errors } = validateSignupData(newUser);
@@ -46,6 +47,7 @@ exports.signup = (req, res) => {
         email: newUser.email,
         createdAt: new Date().toISOString(),
         userId,
+        isSick: false
       };
       return db.doc(`/users/${newUser.email}`).set(userCredentials);
     })
@@ -114,6 +116,24 @@ exports.getAuthenticatedUser = (req, res) => {
     return res.json(userData)
   })
   //we will need a couple more thens in order to get the location data
+  .catch(err => {
+    console.error(err);
+    return res.status(500).json({error: error.code})
+  })
+}
+
+exports.changeSicknessStatus = (req, res) => {
+  let userDetails = reduceUserDetails(req.body);
+  let userData = {};
+  console.log(userDetails);
+  db.doc(`/users/${req.user.email}`).update(userDetails)
+  .then(() => {
+    userData = {
+      message: "successfully updated your sickness status"
+    }
+    console.log(userData)
+    return res.json(userData)
+  })
   .catch(err => {
     console.error(err);
     return res.status(500).json({error: error.code})

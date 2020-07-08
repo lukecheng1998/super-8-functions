@@ -55,19 +55,14 @@ exports.validateLoginData = (data) => {
 //Get user details we might not need this method
 exports.reduceUserDetails = (data) => {
   let userDetails = {};
-  if (!isEmpty(data.bio.trim())) {
-    userDetails.bio = data.bio;
+  //Check to see if a user is sick or not
+  //console.log(data.isSick);
+  //console.log(userDetails.isSick);
+  if(data.isSick === true){
+    userDetails.isSick = data.isSick;
+  }else if(data.isSick === false){
+    userDetails.isSick = data.isSick
   }
-  //allow anyone to connect to our website with having to type https://
-  if (!isEmpty(data.website.trim())) {
-    if (data.website.trim().substring(0, 4) !== "http") {
-      userDetails.website = `http://${data.website.trim()}`;
-    } else {
-      userDetails.website = data.website;
-    }
-  }
-  if (!isEmpty(data.location.trim())) {
-    userDetails;
-  }
+  
   return userDetails;
 };
