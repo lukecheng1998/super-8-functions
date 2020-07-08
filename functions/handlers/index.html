@@ -21,7 +21,7 @@
             setConnectedStatus(false);    
  
             var options = {     
-                acceptAllDevices: true  
+                acceptAllDevices: true  //We can use this to filter out devices
             } 
             navigator.bluetooth.requestDevice(options)     
                 .then(device => {      
@@ -30,8 +30,9 @@
                     console.log('> Connected:        ' + device.gatt.connected);      
                     selected_device = device; 
                     console.log(selected_device);      
-                    connect();     
-                })     
+                    connect();         //connect functionality may not be needed, we just need to be able to scan environment 
+                                        //for devices, but the connect function returns a bluetoothdevice object which might give us access to the information we want
+                })                                                          //here maybe we can create an object for each device, and populate an array with those objects? 
                 .catch(error => {      
                     alert('ERROR: ' + error);      
                     console.log('ERROR: ' + error);     
@@ -48,7 +49,7 @@
                         setConnectedStatus(true);       
                         connected_server = server;       
                         selected_device.addEventListener('gattserverdisconnected', onDisconnected);
-                        // discoverSvcsAndChars();      
+                        // discoverSvcsAndChars();                                                      Was this function not implemented? 
                     },      
                     function (error) {       
                         console.log("ERROR: could not connect - " + error);       
@@ -72,6 +73,7 @@
                 document.getElementById('btn_scan').innerHTML = "Discover Devices";    
             }   
         }
+        //readModelNumber method?
 
         function resetUI() {    
             setConnectedStatus(false);       
