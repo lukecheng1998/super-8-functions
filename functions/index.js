@@ -16,6 +16,8 @@ const { signup, login, getAuthenticatedUser, changeSicknessStatus } = require(".
 //functions from bluetooth.js
 const { discoverDevicesOrDisconnect } = require("./handlers/bluetooth")
 
+//TODO: Once a sickness is discovered, we'll need a list to return from
+
 //Sign up
 app.post("/signup", signup);
 //Log into the file

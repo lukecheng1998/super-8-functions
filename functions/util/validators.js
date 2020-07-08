@@ -63,6 +63,6 @@ exports.reduceUserDetails = (data) => {
   }else if(data.isSick === false){
     userDetails.isSick = data.isSick
   }
-  //allow anyone to connect to our website with having to type https://
+  
   return userDetails;
 };

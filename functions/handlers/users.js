@@ -124,10 +124,15 @@ exports.getAuthenticatedUser = (req, res) => {
 
 exports.changeSicknessStatus = (req, res) => {
   let userDetails = reduceUserDetails(req.body);
+  let userData = {};
   console.log(userDetails);
   db.doc(`/users/${req.user.email}`).update(userDetails)
   .then(() => {
-    return res.json({message: 'sucessfully changed your sickness status'})
+    userData = {
+      message: "successfully updated your sickness status"
+    }
+    console.log(userData)
+    return res.json(userData)
   })
   .catch(err => {
     console.error(err);
