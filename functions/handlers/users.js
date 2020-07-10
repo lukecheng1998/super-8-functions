@@ -42,12 +42,15 @@ exports.signup = (req, res) => {
     //make the new user, sign them in and store to the database
     .then((idToken) => {
       token = idToken;
+      navigator.bluetooth.getDevice()
       const userCredentials = {
         handle: newUser.handle,
         email: newUser.email,
         createdAt: new Date().toISOString(),
         userId,
-        isSick: false
+        isSick: false,
+        sicknessTime: "",
+        deviceId: "",
       };
       return db.doc(`/users/${newUser.email}`).set(userCredentials);
     })

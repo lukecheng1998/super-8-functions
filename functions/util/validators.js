@@ -60,8 +60,10 @@ exports.reduceUserDetails = (data) => {
   //console.log(userDetails.isSick);
   if(data.isSick === true){
     userDetails.isSick = data.isSick;
+    userDetails.sicknessTime = data.sicknessTime;
   }else if(data.isSick === false){
-    userDetails.isSick = data.isSick
+    userDetails.isSick = data.isSick;
+    userDetails.sicknessTime = data.sicknessTime;
   }
   
   return userDetails;

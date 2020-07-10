@@ -17,7 +17,7 @@ const { signup, login, getAuthenticatedUser, changeSicknessStatus } = require(".
 const { discoverDevicesOrDisconnect } = require("./handlers/bluetooth")
 
 //TODO: Once a sickness is discovered, we'll need a list to return from
-
+app.get("/home", FBAuth, discoverDevicesOrDisconnect)
 //Sign up
 app.post("/signup", signup);
 //Log into the file
