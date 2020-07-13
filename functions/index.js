@@ -14,10 +14,10 @@ app.use(cors());
 //Get the functions from the other file
 const { signup, login, getAuthenticatedUser, changeSicknessStatus } = require("./handlers/users");
 //functions from bluetooth.js
-const { discoverDevicesOrDisconnect } = require("./handlers/bluetooth")
+const { postBluetoothDevice } = require("./handlers/bluetooth")
 
 //TODO: Once a sickness is discovered, we'll need a list to return from
-app.get("/home", FBAuth, discoverDevicesOrDisconnect)
+app.post("/bluetooth", FBAuth, postBluetoothDevice)
 //Sign up
 app.post("/signup", signup);
 //Log into the file

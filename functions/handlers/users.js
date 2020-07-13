@@ -42,7 +42,6 @@ exports.signup = (req, res) => {
     //make the new user, sign them in and store to the database
     .then((idToken) => {
       token = idToken;
-      navigator.bluetooth.getDevice()
       const userCredentials = {
         handle: newUser.handle,
         email: newUser.email,
@@ -50,12 +49,17 @@ exports.signup = (req, res) => {
         userId,
         isSick: false,
         sicknessTime: "",
-        deviceId: "",
       };
       return db.doc(`/users/${newUser.email}`).set(userCredentials);
     })
+    
     .then(() => {
       return res.status(201).json({ token });
+    })
+    .then(() => {
+      return db.doc(`/users/${newUser.email}`).collection('devices').add({
+        deviceId: userId
+      })
     })
     .catch((err) => {
       console.log(err);
@@ -92,6 +96,13 @@ exports.login = (req, res) => {
       console.log(token);
       return res.json({ token });
     }) //catch any errors if anything is incorrect
+    .then(() => {
+      const data = {
+        deviceId: navigator.bluetooth.getDevice()
+      }
+      db.doc(`/users/${req.user.email}`).update(data)
+      return res.json(data)
+    })
     .catch((err) => {
       console.log(err);
       return res
