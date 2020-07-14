@@ -98,7 +98,7 @@ exports.login = (req, res) => {
     }) //catch any errors if anything is incorrect
     .then(() => {
       const data = {
-        deviceId: navigator.bluetooth.getDevice()
+        deviceId: ""//navigator.bluetooth.getDevice()
       }
       db.doc(`/users/${req.user.email}`).update(data)
       return res.json(data)
