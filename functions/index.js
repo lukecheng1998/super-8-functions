@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 const app = require("express")();
 const FBAuth = require("./util/fbAuth");
 const cors = require("cors");
-const {db} = require('./util/admin')
+const { db } = require("./util/admin");
 app.use(cors());
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -12,12 +12,23 @@ app.use(cors());
 //  response.send("Hello from Firebase!");
 // });
 //Get the functions from the other file
-const { signup, login, getAuthenticatedUser, changeSicknessStatus } = require("./handlers/users");
+const {
+  signup,
+  login,
+  getAuthenticatedUser,
+  changeSicknessStatus,
+} = require("./handlers/users");
 //functions from bluetooth.js
-const { postBluetoothDevice } = require("./handlers/bluetooth")
+const {
+  postBluetoothDevice,
+  postEvent,
+  getAllEventsAndCreateNotification,
+} = require("./handlers/bluetooth");
 
 //TODO: Once a sickness is discovered, we'll need a list to return from
-app.post("/bluetooth", FBAuth, postBluetoothDevice)
+app.post("/bluetooth", FBAuth, postBluetoothDevice);
+app.post("/event", FBAuth, postEvent);
+app.post("/notification", FBAuth, getAllEventsAndCreateNotification);
 //Sign up
 app.post("/signup", signup);
 //Log into the file

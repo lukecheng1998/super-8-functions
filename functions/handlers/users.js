@@ -15,7 +15,7 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
-    handle: req.body.handle
+    handle: req.body.handle,
   };
   //Check and make sure all the contents are valid
   const { valid, errors } = validateSignupData(newUser);
@@ -49,17 +49,18 @@ exports.signup = (req, res) => {
         userId,
         isSick: false,
         sicknessTime: "",
+        event: ""
       };
       return db.doc(`/users/${newUser.email}`).set(userCredentials);
     })
-    
+
     .then(() => {
       return res.status(201).json({ token });
     })
     .then(() => {
-      return db.doc(`/users/${newUser.email}`).collection('devices').add({
-        deviceId: userId
-      })
+      return db.doc(`/users/${newUser.email}`).collection("devices").add({
+        deviceId: userId,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -72,6 +73,7 @@ exports.signup = (req, res) => {
       }
     });
 };
+//Get events
 
 //login a user
 exports.login = (req, res) => {
@@ -98,10 +100,10 @@ exports.login = (req, res) => {
     }) //catch any errors if anything is incorrect
     .then(() => {
       const data = {
-        deviceId: ""//navigator.bluetooth.getDevice()
-      }
-      db.doc(`/users/${req.user.email}`).update(data)
-      return res.json(data)
+        deviceId: "", //navigator.bluetooth.getDevice()
+      };
+      db.doc(`/users/${req.user.email}`).update(data);
+      return res.json(data);
     })
     .catch((err) => {
       console.log(err);
@@ -113,43 +115,45 @@ exports.login = (req, res) => {
 //Get an authenticated user
 exports.getAuthenticatedUser = (req, res) => {
   let userData = {};
-  db.doc(`/users/${req.user.email}`).get()
-  .then(doc => {
-    if(doc.exists){
-      //Create Credentials sublist
-      userData.credentials = doc.data();
-      console.log(userData)
-      //Later on return the location of where the person has been
-      // userData.credentials.push({
-      //   createdAt: doc.data().recipient,
-      //   email: doc.data().email,
-      //   handle: doc.data().handle,
-      //   userId: doc.data().userId
-      // })
-    }
-    return res.json(userData)
-  })
-  //we will need a couple more thens in order to get the location data
-  .catch(err => {
-    console.error(err);
-    return res.status(500).json({error: error.code})
-  })
-}
+  db.doc(`/users/${req.user.email}`)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        //Create Credentials sublist
+        userData.credentials = doc.data();
+        console.log(userData);
+        //Later on return the location of where the person has been
+        // userData.credentials.push({
+        //   createdAt: doc.data().recipient,
+        //   email: doc.data().email,
+        //   handle: doc.data().handle,
+        //   userId: doc.data().userId
+        // })
+      }
+      return res.json(userData);
+    })
+    //we will need a couple more thens in order to get the location data
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: error.code });
+    });
+};
 
 exports.changeSicknessStatus = (req, res) => {
   let userDetails = reduceUserDetails(req.body);
   let userData = {};
   console.log(userDetails);
-  db.doc(`/users/${req.user.email}`).update(userDetails)
-  .then(() => {
-    userData = {
-      message: "successfully updated your sickness status"
-    }
-    console.log(userData)
-    return res.json(userData)
-  })
-  .catch(err => {
-    console.error(err);
-    return res.status(500).json({error: error.code})
-  })
-}
+  db.doc(`/users/${req.user.email}`)
+    .update(userDetails)
+    .then(() => {
+      userData = {
+        message: "successfully updated your sickness status",
+      };
+      console.log(userData);
+      return res.json(userData);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: error.code });
+    });
+};
