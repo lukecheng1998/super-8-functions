@@ -143,6 +143,9 @@ exports.changeSicknessStatus = (req, res) => {
   let userDetails = reduceUserDetails(req.body);
   let userData = {};
   console.log(userDetails);
+  if(!valid){
+    
+  }
   db.doc(`/users/${req.user.email}`)
     .update(userDetails)
     .then(() => {

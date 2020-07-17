@@ -24,21 +24,22 @@ exports.getAllEventsAndCreateNotification = (req, res) => {
         //console.log(data[i]);
         // console.log(req.user.handle);
         // console.log(data[i].userHandle);
-        // console.log(req.user.event);
+        // console.log(req.body.event);
         // console.log(data[i].event);
-        // console.log(req.user.isSick);
+        // console.log(req.body.isSick);
         if (
           req.user.handle !== data[i].userHandle &&
-          req.user.event === data[i].event &&
-          req.user.isSick === true
+          req.body.event === data[i].event &&
+          req.body.isSick === true
         ) {
+          console.log("about to go to userInfo")
           userInfo = {
             event: req.user.event,
-            notificationId: doc.id,
             createdAt: new Date().toISOString(),
             recipient: data[i].userHandle,
           };
           console.log(userInfo);
+        
           db.collection("notifications")
             .add(userInfo)
             .then(() => {

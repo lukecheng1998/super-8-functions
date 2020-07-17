@@ -16,6 +16,10 @@ const isEmail = (email) => {
   }
 };
 //Check and make sure that all textfields are filled and are valid when signing up
+exports.validateTextfieldData = (data) => {
+  let errors = {};
+
+}
 exports.validateSignupData = (data) => {
   let errors = {};
   if (isEmpty(data.email)) {
