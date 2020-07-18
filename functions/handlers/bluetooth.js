@@ -1,73 +1,103 @@
-const connected = false;   
-const selected_device;   
-const connected_server; 
-
-exports.discoverDevicesOrDisconnect = () => {
-    console.log("discoverDevicesOrDisconnect");
-    if (!connected) {     
-        discoverDevices();    
-    } else {     
-        selected_device.gatt.disconnect();     
-        resetUI();    
-    }   
-}
-
-exports.discoverDevices = () => {
-    console.log("discoverDevices"); 
-    setConnectedStatus(false);    
-
-    var options = {     
-        acceptAllDevices: true  
-    } 
-    navigator.bluetooth.requestDevice(options)     
-        .then(device => {      
-            console.log('> Name:             ' + device.name);      
-            console.log('> Id:               ' + device.id);      
-            console.log('> Connected:        ' + device.gatt.connected);      
-            selected_device = device; 
-            console.log(selected_device);      
-            connect();     
-        })     
-        .catch(error => {      
-            alert('ERROR: ' + error);      
-            console.log('ERROR: ' + error);     
-        });   
-}
-
-exports.connect = () => {
-    if (connected == false) {     
-        console.log("connecting");     
-        selected_device.gatt.connect().then(
-            function (server) {       
-                console.log("Connected to " + server.device.id);       
-                console.log("connected=" + server.connected);      
-                setConnectedStatus(true);       
-                connected_server = server;       
-                selected_device.addEventListener('gattserverdisconnected', onDisconnected);
-            },      
-            function (error) {       
-                console.log("ERROR: could not connect - " + error);       
-                alert("ERROR: could not connect - " + error);       
-                setConnectedStatus(false);      
-            });    
-    }   
-}
-
-exports.onDisconnected = () => {    
-    console.log("onDisconnected");    
-    resetUI();   
-} 
-
-exports.setConnectedStatus = (status) => {    
-    connected = status;    
-    document.getElementById('status_connected').innerHTML = status;    
-    if (status == true) {     
-        document.getElementById('btn_scan').innerHTML = "Disconnect";    
-    } else { 
-        document.getElementById('btn_scan').innerHTML = "Discover Devices";    
-    }   
-}
-
-exports.resetUI = () => {    
-    setConnectedStatus(false);        
-} 
+const { db } = require("../util/admin");
+const firebase = require("firebase");
+const config = require("../util/config");
+exports.getAllEventsAndCreateNotification = (req, res) => {
+  const userInfo = {};
+  db.collection("events")
+    .get()
+    .then((data) => {
+      let getAllEvents = [];
+      data.forEach((doc) => {
+        getAllEvents.push({
+          date: doc.data().date,
+          event: doc.data().event,
+          userHandle: doc.data().userHandle,
+          eventId: doc.id,
+          venue: doc.data().venue,
+        });
+      });
+      //return res.json(getAllEvents);
+      return getAllEvents;
+    })
+    .then((data) => {
+      for (var i = 0; i < data.length; i++) {
+        //console.log(data[i]);
+        // console.log(req.user.handle);
+        // console.log(data[i].userHandle);
+        // console.log(req.body.event);
+        // console.log(data[i].event);
+        // console.log(req.body.isSick);
+        if (
+          req.user.handle !== data[i].userHandle &&
+          req.body.event === data[i].event &&
+          req.body.isSick === true
+        ) {
+          console.log("about to go to userInfo")
+          userInfo = {
+            event: req.user.event,
+            createdAt: new Date().toISOString(),
+            recipient: data[i].userHandle,
+          };
+          console.log(userInfo);
+        
+          db.collection("notifications")
+            .add(userInfo)
+            .then(() => {
+              return res.json(userInfo);
+            });
+        }
+      }
+    })
+    .then(() => {
+      return res.status(200).json({ message: "added notification" });
+    })
+    .catch((err) => console.error(err));
+};
+exports.postBluetoothDevice = (req, res) => {
+  const DeviceData = {
+    deviceId: req.body.deviceId,
+    time: new Date().toISOString(),
+  };
+  console.log(DeviceData);
+  db.doc(`/users/${req.user.email}`)
+    .collection("devices")
+    .doc(DeviceData.deviceId)
+    .set(DeviceData)
+    .then(() => {
+      return res.status(200).json({ message: "Sucessfully added device" });
+    })
+    .catch((err) => {
+      return res.status(500).json({ err: err.code });
+    });
+};
+exports.postEvent = (req, res) => {
+  const eventData = {
+    event: req.body.event,
+    date: req.body.date,
+    venue: req.body.venue,
+    userHandle: req.user.handle,
+  };
+  const eUserData = {
+    event: req.body.event,
+  };
+  db.collection("events")
+    .add(eventData)
+    .then((doc) => {
+      resEvent = eventData;
+      resEvent.event = doc.event;
+      res.json(resEvent);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+  db.doc(`/users/${req.user.email}`)
+    .update(eUserData)
+    .then(() => {
+      return res.status(200).json({ message: "Successfully added your event" });
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).json({ error: err.code });
+    });
+};
